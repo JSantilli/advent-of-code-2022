@@ -24,3 +24,11 @@ async function processFile() {
 }
 
 processFile();
+
+function getPriorityOfItem(item) {
+	if (item === item.toUpperCase()) {
+		return item.charCodeAt() - 38;
+	} else {
+		return item.charCodeAt() - 96;
+	}
+}
