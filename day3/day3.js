@@ -13,10 +13,29 @@ async function processFile() {
 			crlfDelay: Infinity,
 		});
 
+		let totalPriority = 0;
 		rl.on('line', (line) => {
+			const firstHalf = line.slice(0, line.length / 2);
+			const secondHalf = line.slice(line.length / 2);
+
+			const firstHalfCharSet = new Set(firstHalf.split(''));
+			const secondHalfCharSet = new Set(secondHalf.split(''));
+
+			let duplicateChar = '';
+			for (const char of firstHalfCharSet) {
+				if (secondHalfCharSet.has(char)) {
+					duplicateChar = char;
+					totalPriority += getPriorityOfItem(char);
+					break;
+				}
+			}
+
 		});
 
 		await events.once(rl, 'close');
+
+		// part 1
+		console.log(totalPriority);
 
 	} catch (err) {
 		console.log(err);
