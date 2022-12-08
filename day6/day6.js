@@ -14,6 +14,7 @@ async function processFile() {
 		});
 
 		let startOfPacketMarkerCharacter = -1;
+		let startofMessageMarkerCharacter = -1;
 
 		rl.on('line', (line) => {
 			const characters = line.split('');
@@ -27,6 +28,16 @@ async function processFile() {
 					break;
 				}
 			}
+
+			for (let index = 0; index < characters.length - 13; index++) {
+				const bufferSlice = characters.slice(index, index + 14);
+				
+				if (new Set(bufferSlice).size === 14) {
+					// we have a unique buffer slice
+					startofMessageMarkerCharacter = index + 14;
+					break;
+				}
+			}
 		});
 
 		await events.once(rl, 'close');
@@ -35,7 +46,7 @@ async function processFile() {
 		console.log(startOfPacketMarkerCharacter);
 
 		// part 2
-		console.log('');
+		console.log(startofMessageMarkerCharacter);
 
 	} catch (err) {
 		console.log(err);
