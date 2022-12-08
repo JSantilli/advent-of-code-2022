@@ -20,7 +20,19 @@ async function processFile() {
 
 		let lineCount = 0;
 
-		const stacks = {
+		const stacks_9000 = {
+			'1': [],
+			'2': [],
+			'3': [],
+			'4': [],
+			'5': [],
+			'6': [],
+			'7': [],
+			'8': [],
+			'9': [],
+		};
+
+		const stacks_9001 = {
 			'1': [],
 			'2': [],
 			'3': [],
@@ -42,7 +54,8 @@ async function processFile() {
 
 				for (let index = 1, crate = 1; index < rowChars.length; index += 4, crate += 1) {
 					if (rowChars[index] !== ' ') {
-						stacks[crate].unshift(rowChars[index]);
+						stacks_9000[crate].unshift(rowChars[index]);
+						stacks_9001[crate].unshift(rowChars[index]);
 					}
 				}
 
@@ -58,29 +71,42 @@ async function processFile() {
 				const toStack = instructionTokens.at(5);
 
 				for (let index = 0; index < iterations; index++) {
-					stacks[toStack].push(stacks[fromStack].pop());
+					stacks_9000[toStack].push(stacks_9000[fromStack].pop());
 				}
+
+				stacks_9001[toStack].push(...stacks_9001[fromStack].splice(-iterations, iterations));
 			}
 		});
 
 		await events.once(rl, 'close');
 
-		const topString =
-			stacks["1"].at(stacks["1"].length - 1) +
-			stacks["2"].at(stacks["2"].length - 1) +
-			stacks["3"].at(stacks["3"].length - 1) +
-			stacks["4"].at(stacks["4"].length - 1) +
-			stacks["5"].at(stacks["5"].length - 1) +
-			stacks["6"].at(stacks["6"].length - 1) +
-			stacks["7"].at(stacks["7"].length - 1) +
-			stacks["8"].at(stacks["8"].length - 1) +
-			stacks["9"].at(stacks["9"].length - 1);
+		const topString_9000 =
+			stacks_9000["1"].at(stacks_9000["1"].length - 1) +
+			stacks_9000["2"].at(stacks_9000["2"].length - 1) +
+			stacks_9000["3"].at(stacks_9000["3"].length - 1) +
+			stacks_9000["4"].at(stacks_9000["4"].length - 1) +
+			stacks_9000["5"].at(stacks_9000["5"].length - 1) +
+			stacks_9000["6"].at(stacks_9000["6"].length - 1) +
+			stacks_9000["7"].at(stacks_9000["7"].length - 1) +
+			stacks_9000["8"].at(stacks_9000["8"].length - 1) +
+			stacks_9000["9"].at(stacks_9000["9"].length - 1);
+
+		const topString_9001 =
+			stacks_9001["1"].at(stacks_9001["1"].length - 1) +
+			stacks_9001["2"].at(stacks_9001["2"].length - 1) +
+			stacks_9001["3"].at(stacks_9001["3"].length - 1) +
+			stacks_9001["4"].at(stacks_9001["4"].length - 1) +
+			stacks_9001["5"].at(stacks_9001["5"].length - 1) +
+			stacks_9001["6"].at(stacks_9001["6"].length - 1) +
+			stacks_9001["7"].at(stacks_9001["7"].length - 1) +
+			stacks_9001["8"].at(stacks_9001["8"].length - 1) +
+			stacks_9001["9"].at(stacks_9001["9"].length - 1);
 
 		// part 1
-		console.log(topString);
+		console.log(topString_9000);
 
 		// part 2
-		console.log('');
+		console.log(topString_9001);
 
 	} catch (err) {
 		console.log(err);
