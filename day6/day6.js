@@ -13,14 +13,26 @@ async function processFile() {
 			crlfDelay: Infinity,
 		});
 
+		let startOfPacketMarkerCharacter = -1;
+
 		rl.on('line', (line) => {
+			const characters = line.split('');
 			
+			for (let index = 0; index < characters.length - 3; index++) {
+				const bufferSlice = characters.slice(index, index + 4);
+				
+				if (new Set(bufferSlice).size === 4) {
+					// we have a unique buffer slice
+					startOfPacketMarkerCharacter = index + 4;
+					break;
+				}
+			}
 		});
 
 		await events.once(rl, 'close');
 
 		// part 1
-		console.log('');
+		console.log(startOfPacketMarkerCharacter);
 
 		// part 2
 		console.log('');
