@@ -14,6 +14,7 @@ async function processFile() {
 		});
 
 		let pairsWithOneContained = 0;
+		let pairsWithOverlap = 0;
 
 		rl.on('line', (line) => {
 
@@ -24,6 +25,10 @@ async function processFile() {
 			if (contains(firstSections, secondSections) || contains(secondSections, firstSections)) {
 				pairsWithOneContained += 1;
 			}
+
+			if (overlaps(firstSections, secondSections)) {
+				pairsWithOverlap += 1;
+			}
 		});
 
 		await events.once(rl, 'close');
@@ -32,7 +37,7 @@ async function processFile() {
 		console.log(pairsWithOneContained);
 
 		// part 2
-		console.log('');
+		console.log(pairsWithOverlap);
 
 	} catch (err) {
 		console.log(err);
@@ -52,4 +57,9 @@ function convertStringArrayToIntArray(stringArray) {
 // Does sectionsA contain sectionsB?
 function contains(sectionsA, sectionsB) {
 	return sectionsA[0] <= sectionsB[0] && sectionsA[1] >= sectionsB[1];
+}
+
+// Do the two sets of sections overlap?
+function overlaps(sectionsA, sectionsB) {
+	return sectionsA[1] >= sectionsB[0] && sectionsB[1] >= sectionsA[0];
 }
