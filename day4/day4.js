@@ -13,14 +13,23 @@ async function processFile() {
 			crlfDelay: Infinity,
 		});
 
+		let pairsWithOneContained = 0;
+
 		rl.on('line', (line) => {
 
+			const splitPair = line.split(',');
+			const firstSections = convertStringArrayToIntArray(splitPair[0].split('-'));
+			const secondSections = convertStringArrayToIntArray(splitPair[1].split('-'));
+
+			if (contains(firstSections, secondSections) || contains(secondSections, firstSections)) {
+				pairsWithOneContained += 1;
+			}
 		});
 
 		await events.once(rl, 'close');
 
 		// part 1
-		console.log('');
+		console.log(pairsWithOneContained);
 
 		// part 2
 		console.log('');
@@ -31,3 +40,16 @@ async function processFile() {
 }
 
 processFile();
+
+function convertStringArrayToIntArray(stringArray) {
+	const intArray = [];
+	stringArray.forEach(string => {
+		intArray.push(parseInt(string));
+	});
+	return intArray;
+}
+
+// Does sectionsA contain sectionsB?
+function contains(sectionsA, sectionsB) {
+	return sectionsA[0] <= sectionsB[0] && sectionsA[1] >= sectionsB[1];
+}
