@@ -60,19 +60,27 @@ async function processFile() {
 
 		const totalFilesystemSize = calculateDirectorySize(root);
 
+		directories.sort((a, b) => a - b);
+
 		let totalSizeOfDirsAtMost100k = 0;
 
-		directories.forEach(dir => {
+		for (const dir of directories) {
 			if (dir <= 100000) {
 				totalSizeOfDirsAtMost100k += dir;
+			} else {
+				break;
 			}
-		});
+		}
+
+		const neededSpace = totalFilesystemSize - (70000000 - 30000000);
+
+		const smallestDirToDelete = directories.find((dir) => dir >= neededSpace);
 
 		// part 1
 		console.log(totalSizeOfDirsAtMost100k);
 
 		// part 2
-		console.log('');
+		console.log(smallestDirToDelete);
 
 	} catch (err) {
 		console.log(err);
