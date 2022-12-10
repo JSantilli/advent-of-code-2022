@@ -17,15 +17,22 @@ async function processFile() {
 
 		let currentDirectory;
 
+		let totalSizeOfDirsAtMost100k = 0;
+
 		rl.on('line', (line) => {
 
 			const lineTokens = line.split(' ');
-			
+
 			// commands
 			if (lineTokens[0] === '$') {
 
 				if (lineTokens[1] === 'cd') {
 					if (lineTokens[2] === '..') {
+						const totalDirSize = currentDirectory.sizeOfFiles + currentDirectory.childDirs.reduce((accumulator, dir) => accumulator + dir.totalSize, 0);
+						currentDirectory.totalSize = totalDirSize;
+						if (totalDirSize <= 100000) {
+							totalSizeOfDirsAtMost100k += totalDirSize;
+						}
 						currentDirectory = currentDirectory.parent;
 					} else {
 						if (lineTokens[2] === '/') {
@@ -39,18 +46,20 @@ async function processFile() {
 			} else if (lineTokens[0] === 'dir') {
 
 				currentDirectory.childDirs.push(createDirectory(lineTokens[1], currentDirectory));
-			
+
 			} else {
 
-				currentDirectory.sizeOfFiles += parseInt(lineTokens[0]);
+				const fileSize = parseInt(lineTokens[0]);
+				currentDirectory.sizeOfFiles += fileSize;
 
 			}
 		});
 
 		await events.once(rl, 'close');
 
+
 		// part 1
-		console.log('');
+		console.log(totalSizeOfDirsAtMost100k);
 
 		// part 2
 		console.log('');
@@ -63,11 +72,12 @@ async function processFile() {
 processFile();
 
 function createDirectory(name, parent) {
-	
+
 	return {
 		name: name,
 		parent: parent,
 		sizeOfFiles: 0,
 		childDirs: [],
+		totalSize: 0,
 	}
 }
