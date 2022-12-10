@@ -17,8 +17,6 @@ async function processFile() {
 
 		let currentDirectory;
 
-		let totalSizeOfDirsAtMost100k = 0;
-
 		rl.on('line', (line) => {
 
 			const lineTokens = line.split(' ');
@@ -28,11 +26,6 @@ async function processFile() {
 
 				if (lineTokens[1] === 'cd') {
 					if (lineTokens[2] === '..') {
-						const totalDirSize = currentDirectory.sizeOfFiles + currentDirectory.childDirs.reduce((accumulator, dir) => accumulator + dir.totalSize, 0);
-						currentDirectory.totalSize = totalDirSize;
-						if (totalDirSize <= 100000) {
-							totalSizeOfDirsAtMost100k += totalDirSize;
-						}
 						currentDirectory = currentDirectory.parent;
 					} else {
 						if (lineTokens[2] === '/') {
@@ -57,6 +50,23 @@ async function processFile() {
 
 		await events.once(rl, 'close');
 
+		const directories = [];
+
+		function calculateDirectorySize(dir) {
+			const dirSize = dir.sizeOfFiles + dir.childDirs.reduce((acc, subDir) => acc + calculateDirectorySize(subDir), 0);
+			directories.push(dirSize);
+			return dirSize;
+		}
+
+		const totalFilesystemSize = calculateDirectorySize(root);
+
+		let totalSizeOfDirsAtMost100k = 0;
+
+		directories.forEach(dir => {
+			if (dir <= 100000) {
+				totalSizeOfDirsAtMost100k += dir;
+			}
+		});
 
 		// part 1
 		console.log(totalSizeOfDirsAtMost100k);
@@ -78,6 +88,5 @@ function createDirectory(name, parent) {
 		parent: parent,
 		sizeOfFiles: 0,
 		childDirs: [],
-		totalSize: 0,
 	}
 }
