@@ -13,56 +13,71 @@ async function processFile() {
 			crlfDelay: Infinity,
 		});
 
-		const headPosition = [0, 0];
-		const tailPosition = [0, 0];
+		const ropePositions = [
+			[0, 0], // H
+			[0, 0], // 1
+			[0, 0], // 2
+			[0, 0], // 3
+			[0, 0], // 4
+			[0, 0], // 5
+			[0, 0], // 6
+			[0, 0], // 7
+			[0, 0], // 8
+			[0, 0], // 9
+		];
 
 		const tailPositions = new Set();
-		tailPositions.add(tailPosition.toString());
+		tailPositions.add(ropePositions[ropePositions.length - 1].toString());
 
 		function moveHead(direction) {
-			
+
 			if (direction === 'U') {
-				headPosition[1]++;
+				ropePositions[0][1]++;
 			}
 
 			if (direction === 'D') {
-				headPosition[1]--;
+				ropePositions[0][1]--;
 			}
 
 			if (direction === 'L') {
-				headPosition[0]--;
+				ropePositions[0][0]--;
 			}
 
 			if (direction === 'R') {
-				headPosition[0]++;
+				ropePositions[0][0]++;
 			}
 		}
 
 		function moveTail() {
-			
-			const positionDiff = [headPosition[0] - tailPosition[0], headPosition[1] - tailPosition[1]];
 
-			if (Math.abs(positionDiff[0]) === 2) {
-				const movement = positionDiff[0] / Math.abs(positionDiff[0]);
-				tailPosition[0] += movement;
-				if (Math.abs(positionDiff[1]) === 1) {
-					tailPosition[1] += positionDiff[1];
+			for (let i = 1; i < ropePositions.length; i++) {
+				const ropeToMove = ropePositions[i];
+				const ropeToFollow = ropePositions[i - 1];
+
+				const positionDiff = [ropeToFollow[0] - ropeToMove[0], ropeToFollow[1] - ropeToMove[1]];
+
+				if (Math.abs(positionDiff[0]) === 2) {
+					const movement = positionDiff[0] / Math.abs(positionDiff[0]);
+					ropeToMove[0] += movement;
+					if (Math.abs(positionDiff[1]) === 1) {
+						ropeToMove[1] += positionDiff[1];
+					}
+				}
+
+				if (Math.abs(positionDiff[1]) === 2) {
+					const movement = positionDiff[1] / Math.abs(positionDiff[1]);
+					ropeToMove[1] += movement;
+					if (Math.abs(positionDiff[0]) === 1) {
+						ropeToMove[0] += positionDiff[0];
+					}
 				}
 			}
 
-			if (Math.abs(positionDiff[1]) === 2) {
-				const movement = positionDiff[1] / Math.abs(positionDiff[1]);
-				tailPosition[1] += movement;
-				if (Math.abs(positionDiff[0]) === 1) {
-					tailPosition[0] += positionDiff[0];
-				}
-			}
-
-			tailPositions.add(tailPosition.toString());
+			tailPositions.add(ropePositions[ropePositions.length - 1].toString());
 		}
 
 		rl.on('line', (line) => {
-			
+
 			const [direction, countStr] = line.split(' ');
 			const count = parseInt(countStr);
 
@@ -75,13 +90,8 @@ async function processFile() {
 
 		await events.once(rl, 'close');
 
-		console.log(tailPositions);
-
-		// part 1
-		console.log(tailPositions.size);
-
 		// part 2
-		console.log('');
+		console.log(tailPositions.size);
 
 	} catch (err) {
 		console.log(err);
