@@ -118,13 +118,14 @@ function runSimulation() {
 			},
 		];
 
-		for (let round = 0; round < 20; round++) {
+		for (let round = 0; round < 10000; round++) {
 
 			monkeys.forEach(monkey => {
 				while (monkey.startingItems.length > 0) {
 					let item = monkey.startingItems.shift();
 					item = monkey.operation(item);
-					item = Math.floor(item / 3);
+					// item = Math.floor(item / 3);
+					item = item % 9699690; // LCM of all test divisors
 					let monkeyNumber = monkey.test(item);
 					monkeys[monkeyNumber].startingItems.push(item);
 					monkey.inspections++;
@@ -133,12 +134,8 @@ function runSimulation() {
 		}
 
 		monkeys.sort((a, b) => b.inspections - a.inspections);
-
-		// part 1
+		
 		console.log(monkeys[0].inspections * monkeys[1].inspections);
-
-		// part 2
-		console.log('');
 
 	} catch (err) {
 		console.log(err);
